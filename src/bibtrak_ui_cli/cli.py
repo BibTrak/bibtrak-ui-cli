@@ -29,6 +29,11 @@ def init_handler(args):
 
 def add_handler(args):
     from bibtrak import db
+    from bibtrak import handler
+
+    from straight.plugin import load
+
+    handlers = load("bibtrak.handlers", subclasses=handler.Handler)
 
     handler_name, handler_id = args.handler__id.split(":", maxsplit=1)
     db_id = args.id or handler_id
