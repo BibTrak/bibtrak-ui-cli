@@ -34,16 +34,27 @@ def add_handler(args):
     from straight.plugin import load
 
     handlers = load("bibtrak.handlers", subclasses=handler.Handler)
+    print("@@@HANDLERS@@@")
+    print(handlers)
+
+    for h in handlers:
+        print(vars(h))
 
     handler_name, handler_id = args.handler__id.split(":", maxsplit=1)
     db_id = args.id or handler_id
 
-    handler = handlers[handler_name]
-    data = handler(handler_id)
+    for h in handlers:
+        if h.__name__ == handler_name:
+            handler = h
+            break
+    else:
+        raise Exception
+
+    data = handler().fetch(handler_id)
 
     database = db.get_db_file()
     for key, value in data.items():
-        db.insert(database, key, value)
+        db.insert(database, db_id, key, str(value))
 
 
 
